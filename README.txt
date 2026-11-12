@@ -1,1 +1,4 @@
-Raesya WonderLand V15 UI Fix v7. Upload ALL contents of this folder into the ROOT of the existing v15-dev repo, including assets folder. Do NOT upload the containing folder. Changes: self-contained Rizqi picture in app.js; Home Photo from V14 (read-only) and Choose Photo; colorful two-tone SVG for all menu and activity icons; bumped cache version. V14 is not changed. All learning games still previews.
+Raesya WonderLand V15 - Main Header Update (v8)
+Replace the old Hi, Raesya greeting section with the approved AI Raesya main banner.
+Upload the contents of this directory to the ROOT of the V15 GitHub repository, replacing same-named files.
+Keep the assets folder structure. No V14 files are modified.

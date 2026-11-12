@@ -1,6 +1,6 @@
 // This cache is scoped to the independent V15 development path. Never deploy over V14.
-const CACHE='raesyas-wonderland-v15-dev-v7-colored-photo-fix';
-const ASSETS=['./','./index.html','./styles.css?v=7','./app.js?v=7','./manifest.webmanifest','./assets/icon.svg'];
+const CACHE='raesyas-wonderland-v15-dev-v8-raesya-main-banner';
+const ASSETS=['./','./index.html','./styles.css?v=8','./app.js?v=8','./manifest.webmanifest','./assets/icon.svg','./assets/raesya-main-header.webp'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('raesyas-wonderland-v15-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);const scope=new URL('./',self.location.href);if(u.origin!==scope.origin||!u.pathname.startsWith(scope.pathname))return;e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(r=>{if(r.ok&&r.type==='basic'){const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy))}return r}))) });
