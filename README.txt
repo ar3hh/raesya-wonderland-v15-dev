@@ -1,0 +1,1 @@
+V15 Rizqi Header Update — upload these files to the ROOT of raesya-wonderland-v15-dev. Replace files with same name. Only Rizqi Explorer header displays approved AI art. Menu activity cards remain interactive placeholders. Back goes directly Home. This version includes previous SVG icon fix. No V14 changes.
