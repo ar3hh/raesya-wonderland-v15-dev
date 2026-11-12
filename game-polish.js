@@ -2,11 +2,11 @@
 /* V15 scoped gameplay fix. No V14 files or saved marks touched. */
 const B3_EXTRA_ART={};
 const B3_SAFARI=['Lion','Tiger','Elephant','Rabbit','Cat','Dog','Duck','Bird','Fish','Butterfly'];
-const B3_PICTURES=['Apple','Banana','Orange','Pear','Lemon','Grapes','Carrot','Cherry','Fish','Bird','Cat','Dog','Lion','Tiger','Rabbit','Duck','Butterfly','Elephant','Flower','Star'];
+const B3_PICTURES=["Banana","Duck","Flower","Butterfly","Lemon","Tiger","Fish","Pear","Orange","Carrot","Rabbit","Grapes","Bird","Apple","Car","Bus","Ladybug","Frog","Cat","Dog","Panda","Cow","Horse","Sheep","Pig","Elephant","Soccer Ball","Basketball","Mushroom","Tree","Strawberry","Watermelon","Pineapple","Fire Truck","Dump Truck","Teddy Bear","Doll","Robot","Rocket","Kite","Helicopter","Sailboat","Seashell","Dolphin","Sun","Rainbow","Cherry","Lion","Star","Bicycle"];
 let b3SpellingDeck=[],b3SpellingTarget=10,b3SpellingDone=0,b3SpellingCompleted=false;
 function b3Shuffle(items){const a=items.slice();for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function b3DataPicture(id,label){
- const key=String(id).toLowerCase();let base=B3_EXTRA_ART[key]||GAME_PREMIUM_3D[key];
+ const key=String(id).toLowerCase();let base=(window.LPW_V44_ART&&window.LPW_V44_ART[key])||B3_EXTRA_ART[key]||GAME_PREMIUM_3D[key];
  if(base)return `<img class="b3-object-img" src="data:image/webp;base64,${base}" alt="${qSafe(label)}" draggable="false">`;
  const svg=GAME_INLINE_PICTURES[key];
  if(svg)return `<img class="b3-object-img" src="data:image/svg+xml;base64,${svg}" alt="${qSafe(label)}" draggable="false">`;
@@ -70,7 +70,7 @@ fullGamesView=function(m){
  if(state.detail!=='spelling')return b3OldGamesView(m);
  if(!fullGame||fullGame.kind!=='spelling'){b3SpellingDeck=b3Shuffle(B3_PICTURES.map(x=>x.toUpperCase()));b3SpellingDone=0;b3SpellingCompleted=false;fullGame=b3SpellingWord()}
  const g=fullGame;
- const buttons=[10,20].map(n=>`<button type="button" class="b3-count-btn ${n===b3SpellingTarget?'selected':''}" data-b3-count="${n}">${n} pictures</button>`).join('');
+ const buttons=[10,20,30,50].map(n=>`<button type="button" class="b3-count-btn ${n===b3SpellingTarget?'selected':''}" data-b3-count="${n}">${n} pictures</button>`).join('');
  if(b3SpellingCompleted)return `<section class="panel app-screen module-shell improved-module">${head(m)}<div class="b3-finish"><h2>Wonderful Spelling!</h2><p>You completed ${b3SpellingDone} different pictures!</p><button class="action primary" data-b3-restart>Play again</button></div></section>`;
  return `<section class="panel app-screen module-shell improved-module">${head(m)}<div class="game-viewport">
  <div class="game-hero spelling-theme"><span class="game-kicker">PICTURE SPELLING • ${b3SpellingDone+1}/${b3SpellingTarget}</span>
