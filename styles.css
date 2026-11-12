@@ -164,3 +164,6 @@
 .lpw-choice{font-size:clamp(22px,3.4vw,34px)!important;font-weight:900!important;min-height:78px!important;border-radius:24px!important;box-shadow:inset 0 4px 4px #ffffff88,0 7px 0 #39405b30,0 11px 15px #25294522!important;transition:transform .12s ease}
 .lpw-choice:active{transform:translateY(5px)}
 @media(max-width:650px){.lpw-image{min-height:250px}.lpw-premium-art{height:270px!important}.lpw-choice{min-height:66px!important;font-size:23px!important}}
+
+/* LPW v42: visible, friendly error instead of broken image icon. */
+.lpw-visual-fallback{width:100%;min-height:210px;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#6c5172;background:#fff1ed;border-radius:18px;padding:24px;text-align:center;}
