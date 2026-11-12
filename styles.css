@@ -26,3 +26,19 @@
  .rizqi-mobile-title h2{font-size:clamp(18px,5.5vw,27px);line-height:1.1;color:#147db3;margin:0 0 12px;}
  .rizqi-mobile-title p{font-size:clamp(11px,3.2vw,14px);line-height:1.35;color:#b45a13;font-weight:750;margin:0;}
 }
+
+/* All icons are individually colored, filled two-tone SVGs (no emoji font dependency). */
+.vector-icon{width:1em;height:1em;display:inline-block;vertical-align:middle;overflow:visible}
+.menu-button .vector-icon{height:34px;width:34px}
+.sidebar nav button span{background:transparent}
+.card .emoji .vector-icon{height:63px;width:63px}
+.activity-emoji .vector-icon{width:68px;height:68px}
+.module-hero-art .vector-icon{width:85px;height:85px}
+.detail-bigicon .vector-icon{width:100px;height:100px}
+.modulehead h1 .vector-icon{width:32px;height:32px}
+.banner .vector-icon{width:34px;height:34px}
+.photo-onboarding{margin-top:14px;border-radius:15px;background:#fff0f7;padding:15px;border:1px solid #f5cadf}
+.photo-onboarding strong{font-size:14px;color:#86456b}.photo-onboarding p{font-size:12px;margin:8px 0;color:#795e77}
+.photo-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.photo-actions .action{font-size:12px;cursor:pointer;display:inline-flex;align-items:center}
+.photo-status{font-size:12px;color:#8c4764}
+@media(max-width:600px){.activity-emoji .vector-icon{width:56px;height:56px}.module-hero-art .vector-icon{width:72px;height:72px}}
