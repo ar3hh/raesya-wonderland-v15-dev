@@ -108,6 +108,7 @@ function hub(m){
 }
 function head(m){return `<div class="modulehead"><button class="backbtn" data-back>← Back to Home</button><h1>${iconSVG(m.emoji)} ${safe(m.name)}</h1><button class="backbtn" data-home>⌂ Home</button></div>`}
 function detailView(m){
+ if(state.view==='revision')return revisionScreen(m);
  const mod=MODULES[state.view],item=mod.items.find(x=>x.id===state.detail);
  if(!item){state.detail=null;return hub(m)}
  return `<section class="panel app-screen module-shell" style="--module-tint:${mod.accent};--module-ink:${mod.ink}">${head(m)}<div class="detail-intro" style="--tile:${item.tone}"><div class="detail-bigicon">${iconSVG(item.icon)}</div><span class="activity-label">${safe(item.label)}</span><h2>${safe(item.name)}</h2><p>${safe(item.desc)}</p><span class="status-pill">In development</span></div><div class="detail-bottom"><h3>Coming in a later development phase</h3><p>This is the design preview for ${safe(item.name)}. Its learning content or interactive game has not been implemented or tested yet.</p><button class="action primary" data-module>← All ${safe(m.name)} activities</button></div></section>`;
@@ -119,7 +120,8 @@ if(state.view==='parent'){$('view').innerHTML=`<section class="panel app-screen"
 $('view').innerHTML=state.detail?detailView(m):hub(m);
 }
 $('menuList').addEventListener('click',e=>{const b=e.target.closest('button[data-id]');if(b)goto(b.dataset.id)});
-$('view').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go)goto(b.dataset.go);else if(b.dataset.detail){state.detail=b.dataset.detail;render();window.scrollTo(0,0)}else if(b.hasAttribute('data-module')){state.detail=null;render()}else if(b.hasAttribute('data-back'))back();else if(b.hasAttribute('data-home'))home();else if(b.hasAttribute('data-import-v14'))importPhotoFromV14();else if(b.hasAttribute('data-remove-photo')){state.profilePhoto=null;save();render()}});
+$('view').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go)goto(b.dataset.go);else if(b.dataset.detail){state.detail=b.dataset.detail;if(state.view==='revision')resetRevisionSelection();render();window.scrollTo(0,0)}else if(b.hasAttribute('data-module')){state.detail=null;render()}else if(b.hasAttribute('data-back'))back();else if(b.hasAttribute('data-home'))home();else if(b.hasAttribute('data-import-v14'))importPhotoFromV14();else if(b.hasAttribute('data-remove-photo')){state.profilePhoto=null;save();render()}});
+$('view').addEventListener('click',handleRevisionClick);
 $('view').addEventListener('change',e=>{if(e.target.id!=='photoInput'&&e.target.id!=='homePhotoInput')return;loadProfilePhoto(e.target.files?.[0]);});
 $('openMenu').addEventListener('click',()=>setMenu(true));$('closeMenu').addEventListener('click',()=>setMenu(false));$('veil').addEventListener('click',()=>setMenu(false));window.addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false)});
 render();
