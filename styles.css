@@ -71,3 +71,23 @@
 
 /* Phase 3D: offline concept illustrations */
 .rev-timevisual,.rev-measure{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:12px 0}.rev-timevisual span,.rev-measure span{padding:12px;background:#e9f1ff;color:#3b679b;border:2px solid #a4c5e5;border-radius:12px;font-weight:900;font-variant-numeric:tabular-nums;font-size:20px}.rev-measure strong{color:#56849c}.rev-shapes{max-width:340px;background:#fff;border-radius:14px;padding:14px;margin:12px 0;display:flex;flex-direction:column;align-items:center}.rev-shapes svg{width:100%}.rev-shapes small{font-size:11px;color:#63778f;text-align:center}.rev-coord{max-width:350px;margin:12px auto;background:white;border-radius:14px;padding:10px}.rev-coord svg{width:100%;height:auto;display:block}
+
+/* V15 consolidated full-build controls */
+.full-coming,.full-note,.full-game,.full-rizqi-game,.full-result,.full-question{background:#fff;border:1px solid #e9e7f0;border-radius:22px;padding:20px;margin:14px 0;box-shadow:0 7px 20px #54658a0b}
+.full-note p,.full-game p{line-height:1.65}.full-alert{background:#fff4e5;color:#805a22;border-radius:14px;padding:12px;margin:12px 0;font-size:.88rem}
+.full-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0}.full-controls label{display:flex;flex-direction:column;gap:6px;flex:1 1 130px;font-weight:600}
+.full-controls select,.full-controls input{border:1px solid #ddd3e9;background:#fff;border-radius:12px;padding:10px;max-width:100%;font:inherit}
+.full-question h2{font-size:1.25rem;line-height:1.5}.full-question .revanswers button{min-height:46px}
+.full-timer{display:inline-block;border-radius:24px;padding:8px 12px;background:#ffebd8;color:#995e27;font-weight:700}.full-saved{background:#e5f7ec;border-radius:12px;padding:12px;color:#276c48}
+.full-result{text-align:center}.full-result strong{font-size:2.4rem;color:#7855ac}
+.full-game input{width:100%;max-width:340px;border-radius:12px;border:1px solid #d3d3e3;padding:14px;font-size:1.1rem;margin:10px 0}
+.full-game .action{margin:4px}.full-largepic{display:flex;justify-content:center;align-items:center;min-height:160px;border-radius:18px;background:#e5f9ee;color:#3c775b;font-weight:800;font-size:1.7rem;text-align:center}
+.full-searchgrid{display:grid;gap:8px}.full-searchgrid button{font-size:1.2rem;letter-spacing:.8rem;background:#ecf5ff;border-radius:12px;padding:14px 10px;border:1px solid #c7d7eb;cursor:pointer}
+.full-rizqi-object{margin:12px auto;padding:18px;min-height:170px;display:flex;align-items:center;justify-content:center;border-radius:28px;background:#fff0db}.full-shape{font-size:5.5rem;color:#df85b3}.full-color-blob{display:block;width:130px;height:130px;border-radius:50%;box-shadow:0 4px 18px #2222}
+.full-rizqi-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.full-rizqi-choices button{border:2px solid #f1d8b9;background:#fff;border-radius:18px;padding:16px;font-size:1.1rem;font-weight:700;cursor:pointer}
+.full-mini-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px}.full-mini-grid button{background:#fff0da;border:1px solid #f1dcc9;border-radius:14px;padding:18px 10px;cursor:pointer;font-weight:700}
+#drawCanvas{display:block;width:100%;max-width:760px;height:auto;background:white;border:2px solid #d9cee3;border-radius:16px;touch-action:none;user-select:none}.full-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}.full-artcard{padding:12px;background:#fff;border:1px solid #e9dbe5;border-radius:14px}.full-artcard img{display:block;width:100%;aspect-ratio:4/3;object-fit:contain}.full-artcard button{margin:3px;border-radius:8px;padding:7px}
+.full-report{max-height:250px;overflow:auto}.full-report>div{padding:7px;border-bottom:1px solid #eee}
+#parentPin,#parentNewPin{display:block;width:100%;max-width:330px;padding:12px;border-radius:12px;border:1px solid #d2c3dd;margin:14px 0;font-size:1.1rem}
+#restorePreview{margin:12px 0;line-height:1.6}
+@media(max-width:520px){.full-note,.full-game,.full-rizqi-game,.full-result,.full-question{padding:14px}.full-searchgrid button{letter-spacing:.45rem;font-size:1rem}}
