@@ -55,7 +55,6 @@ const MODULES={
   {id:'learn',name:'Learn to Draw',icon:'✏️',desc:'Follow easy step-by-step guides',tone:'#e9e3ff',label:'30 guides planned'},
   {id:'gallery',name:'My Art Gallery',icon:'🖼️',desc:'Your saved artwork will live here',tone:'#e3f4e5',label:'Your creations'}]},
  rizqi:{tag:'Little Steps • Big Smiles',intro:'Colourful picture adventures for our little explorer!',accent:'#ffe7d8',ink:'#99583a',icon:'🧸',items:[
-  {id:'safari',name:'Safari Adventure',icon:'🦁',desc:'Match the animals',tone:'#e7f5d8',label:'Animal Matching'},
   {id:'rainbow',name:'Rainbow Playground',icon:'🌈',desc:'Sort bright and beautiful colours',tone:'#ffe6ef',label:'Color Sorting'},
   {id:'shapes',name:'Magic Shape Land',icon:'🔺',desc:'Discover and match shapes',tone:'#e4eaff',label:'Shape Puzzle'},
   {id:'picture',name:'Little Picture World',icon:'🍎',desc:'Look at the picture and choose',tone:'#fff0d0',label:'Picture Quiz'}]}
