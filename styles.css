@@ -167,3 +167,29 @@
 
 /* LPW v42: visible, friendly error instead of broken image icon. */
 .lpw-visual-fallback{width:100%;min-height:210px;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#6c5172;background:#fff1ed;border-radius:18px;padding:24px;text-align:center;}
+
+
+/* v45 iPhone layout and touch-safe matching. Scoped to LPW and Magic Shape. */
+#view,.app,.panel,.module-shell,.lpw-shell,.lpw-layout,.lpw-image,.lpw-choices {min-width:0;max-width:100%;}
+.lpw-shell{width:100%;overflow-x:clip;box-sizing:border-box;}
+.lpw-layout{width:100%;grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+.lpw-image{width:100%;min-width:0;min-height:0!important;height:auto!important;max-height:none!important;aspect-ratio:5/4;padding:8px;box-sizing:border-box;overflow:hidden;}
+.lpw-image img,.lpw-image .lpw-premium-art,.lpw-image .b3-object-img,.lpw-image .premium-3d-picture{display:block;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;min-width:0!important;min-height:0!important;object-fit:contain!important;object-position:center!important;transform:none!important;margin:auto;}
+.lpw-choices{min-width:0;}
+.lpw-choice{min-width:0;overflow-wrap:anywhere;}
+.shape-draggable,.shape-draggable svg,.shape-draggable *{touch-action:none!important;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+.shape-draggable{-webkit-tap-highlight-color:transparent;cursor:grab;}
+.shape-draggable.touch-drag-active{opacity:.5;box-shadow:0 0 0 4px #93ddff!important;}
+.shape-touch-ghost{position:fixed;z-index:99999;pointer-events:none;display:flex;align-items:center;justify-content:center;width:105px;height:105px;transform:translate(-50%,-50%);border:3px solid #a5d7ff;border-radius:22px;background:#ffffffeb;box-shadow:0 12px 30px #24395f45;}
+.shape-touch-ghost svg{width:88px;height:88px;}
+.shape-drop-slot.shape-touch-over{outline:5px solid #61d8a9;outline-offset:4px;}
+@media(max-width:650px){
+ .lpw-layout{grid-template-columns:minmax(0,1fr)!important;gap:14px;}
+ .lpw-shell{padding:10px!important;margin:8px auto;}
+ .lpw-image{aspect-ratio:4/3!important;height:auto!important;max-height:min(42vh,340px)!important;min-height:0!important;}
+ .lpw-image img,.lpw-image .lpw-premium-art{width:100%!important;height:100%!important;max-height:100%!important;}
+ .lpw-choices{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+ .lpw-choice{font-size:clamp(17px,5vw,22px)!important;padding:12px 5px;min-height:62px!important;}
+ .shape-palette{max-width:100%;}
+}
+@media(max-width:375px){.lpw-image{max-height:35vh!important}.lpw-heading h2{font-size:23px}.lpw-choice{font-size:18px!important}}
