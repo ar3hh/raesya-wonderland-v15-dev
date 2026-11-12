@@ -124,4 +124,4 @@ $('view').addEventListener('click',handleRevisionClick);
 $('view').addEventListener('change',e=>{if(e.target.id!=='photoInput'&&e.target.id!=='homePhotoInput')return;loadProfilePhoto(e.target.files?.[0]);});
 $('openMenu').addEventListener('click',()=>setMenu(true));$('closeMenu').addEventListener('click',()=>setMenu(false));$('veil').addEventListener('click',()=>setMenu(false));window.addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false)});
 render();
-if('serviceWorker'in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(e=>console.warn('Offline registration failed',e)));
+/* Offline registration & verification moved to offline-ready-v47.js */
