@@ -1,9 +1,9 @@
-Raesya’s WonderLand V15 – Phase 3C (Year 3 Mathematics pilot)
+Raesya’s WonderLand V15 – Phase 3D (Year 3 Mathematics pilot)
 
-Contains SIX Year 3 Mathematics topics: Fractions, Decimals, Percentages, Whole Numbers, Basic Operations, and Money. Each has notes and ten distinct practice questions.
+FOUR new topics: Time and Time Intervals, Length/Mass/Liquid Volume, Space and 3D Shapes, Coordinates. 10 new practice questions and notes per topic. Total now TEN pilot topics and 100 practice questions. Other DSKP topics including Data Handling remain unfinished.
 
-Upload ALL files and assets folder contents to the root of GitHub repository raesya-wonderland-v15-dev. Commit. Hard-refresh and verify on Windows laptop and iPhone.
+To deploy: unzip, upload all files and assets folder to GitHub Pages repository ROOT, replacing matching files. Commit changes. Do not clear site storage or uninstall the PWA as scores are saved in browser localStorage.
 
-Progress preservation: This build retains Phase 3B localStorage namespace, and reads Phase 3A.1 Fractions history. DO NOT clear site data, cache storage or reinstall before backup. Browser storage does not sync across devices.
+The same existing progress keys are reused to preserve all 3A–3C scores. Local data does not sync automatically across devices. Previous V14 project is untouched.
 
-New topics contain draft educational content needing full independent curriculum and answer QA before publication. Other subjects and Years 4–5 remain placeholders. V14 is not modified.
+Draft educational questions, not KPM-certified; comprehensive external curriculum and answer QA remains pending. Modules other than Year 3 Mathematics are in development.
