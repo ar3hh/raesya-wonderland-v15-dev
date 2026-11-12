@@ -22,52 +22,97 @@ const DEMO_QUESTIONS=[
  {q:'What is 1/3 + 1/3?',answers:['1/6','2/3','2/6','1'],right:1,why:'One third plus one third makes two thirds.'},
  {q:'Which is the smallest fraction?',answers:['1/2','1/3','1/4','1/8'],right:3,why:'Of these unit fractions, 1/8 represents the smallest part.'}
 ];
-// Independent from V14: completed practice attempts are saved under a V15-only key.
-const REV_PROGRESS_KEY='raesya-wonderland-v15-revision-demo-v2';
-let revSaveStatus='';
-function readRevisionProgress(){
- try{
-  const value=JSON.parse(localStorage.getItem(REV_PROGRESS_KEY)||'null');
-  if(!value||!Array.isArray(value.attempts))return [];
-  return value.attempts.filter(a=>a&&a.year===3&&a.subject==='math'&&a.topic==='fractions'&&Number.isInteger(a.score)&&a.score>=0&&a.score<=10&&a.total===10&&typeof a.savedAt==='string').slice(-100);
- }catch(e){return []}
-}
-function saveRevisionProgress(score){
- try{
-  const attempts=readRevisionProgress();
-  const attempt={year:3,subject:'math',topic:'fractions',score,total:10,savedAt:new Date().toISOString()};
-  attempts.push(attempt);
-  localStorage.setItem(REV_PROGRESS_KEY,JSON.stringify({version:2,attempts:attempts.slice(-100)}));
-  const stored=readRevisionProgress();
-  if(!stored.some(a=>a.savedAt===attempt.savedAt&&a.score===attempt.score))throw Error('Saved data did not verify');
-  revSaveStatus='Saved successfully on this device.';
-  return true;
- }catch(e){revSaveStatus='Could not save progress. Check browser storage settings or free storage space.';console.warn('V15 revision save failed',e);return false}
-}
-function progressSummary(){
- const attempts=readRevisionProgress();
- if(!attempts.length)return '<p class="revnote">No saved practice results yet. Finish all 10 questions to save a result.</p>';
- const latest=attempts[attempts.length-1],best=Math.max(...attempts.map(a=>a.score));
- const when=new Date(latest.savedAt);
- const date=Number.isNaN(when.getTime())?'recently':when.toLocaleString('en-MY',{dateStyle:'medium',timeStyle:'short'});
- return `<div class="revprogress" role="status"><strong>Saved Progress ✓</strong><p>Last result: <strong>${latest.score}/10</strong> · Best: <strong>${best}/10</strong> · Completed: ${attempts.length} time(s)</p><p class="muted mini">Last saved: ${date}. Stored on this device only.</p></div>`;
-}
-let revSubject=null,revTopic=null,revAnswerIndex=0,revScore=0,revAnswered=false,revChoice=null;
+
+// Phase 3B: topic-specific practice saves; does NOT modify V14 or legacy V15 saves.
+const REV_PROGRESS_KEY='raesya-wonderland-v15-revision-demo-v2'; // Phase 3A.1 existing data
+const REV_3B_KEY='raesya-wonderland-v15-revision-progress-v3';
+const REV_LESSONS={
+ fractions:{title:'Fractions',standard:'3.1',subtitle:'Equal parts • Equivalent fractions • Adding and subtracting',questions:DEMO_QUESTIONS,notes:`
+ <h3>1. Equal parts of a whole</h3><p>A fraction tells us how many <strong>equal</strong> parts are selected. For example, <strong>1/4</strong> means one of four equal parts.</p>
+ <div class="revpicture" role="img" aria-label="Four equal rectangles: one colored and three uncolored"><span class="shaded"></span><span></span><span></span><span></span></div>
+ <p><strong>Numerator</strong> (top): selected parts. <strong>Denominator</strong> (bottom): total equal parts.</p>
+ <h3>2. Equivalent fractions</h3><p>Different fractions can represent the same amount: <strong>1/2 = 2/4</strong>.</p><div class="revbars" aria-label="One of two parts equals two of four parts"><div class="revbar"><i class="filled"></i><i></i></div><div class="revbar"><i class="filled"></i><i class="filled"></i><i></i><i></i></div></div>
+ <h3>3. Worked example</h3><p>2/4 + 1/4 = 3/4. Add the numerators because the denominators match.</p>`},
+ decimals:{title:'Decimals',standard:'3.2',subtitle:'Hundredths • Compare • Add and subtract',questions:[
+ {q:'Which decimal is three tenths?',answers:['0.03','0.30','0.13','0.33'],right:1,why:'Three tenths is 3/10, written as 0.3 or 0.30.'},
+ {q:'Which decimal is thirty-five hundredths?',answers:['0.53','0.035','0.35','3.5'],right:2,why:'Thirty-five hundredths equals 35/100 = 0.35.'},
+ {q:'Which number is greater?',answers:['0.47','0.74','0.44','0.40'],right:1,why:'0.74 has 7 tenths, greater than the tenths in the other choices.'},
+ {q:'What is 0.2 + 0.3?',answers:['0.5','0.05','0.6','0.23'],right:0,why:'Two tenths plus three tenths equals five tenths: 0.5.'},
+ {q:'What is 0.75 − 0.25?',answers:['0.40','0.60','0.55','0.50'],right:3,why:'75 hundredths minus 25 hundredths equals 50 hundredths, or 0.50.'},
+ {q:'How is 7/100 written as a decimal?',answers:['0.70','0.07','0.7','7.00'],right:1,why:'Seven hundredths has zero in the tenths place and seven in the hundredths place: 0.07.'},
+ {q:'Which decimal is equal to 0.5?',answers:['0.05','0.15','0.50','0.55'],right:2,why:'0.5 and 0.50 are equal because a trailing zero does not change the value.'},
+ {q:'What is 0.14 + 0.23?',answers:['0.37','0.27','0.47','0.33'],right:0,why:'Fourteen hundredths plus twenty-three hundredths is thirty-seven hundredths: 0.37.'},
+ {q:'What is 0.90 − 0.40?',answers:['0.40','0.30','0.60','0.50'],right:3,why:'Nine tenths minus four tenths equals five tenths: 0.50.'},
+ {q:'Which decimal is the smallest?',answers:['0.19','0.21','0.29','0.91'],right:0,why:'0.19 has one tenth; all other choices have at least two tenths.'}
+ ],notes:`<h3>1. Tenths and hundredths</h3><p>A decimal is another way to describe part of a whole. <strong>0.3 = 3/10</strong> and <strong>0.25 = 25/100</strong>.</p>
+ <p>Each square below shows <strong>one hundredth</strong> of a whole. The 25 shaded squares show 0.25.</p><div class="revhundred" role="img" aria-label="Hundred square grid, twenty-five shaded squares">${Array.from({length:100},(_,i)=>`<i class="${i<25?'filled':''}"></i>`).join('')}</div>
+ <h3>2. Compare decimals</h3><p>Compare tenths first, then hundredths: <strong>0.65 &gt; 0.56</strong>.</p><h3>3. Worked example</h3><p>0.24 + 0.15 = <strong>0.39</strong>. Align decimal points; add hundredths and tenths separately.</p>`},
+ percent:{title:'Percentages',standard:'3.3',subtitle:'Percent symbol • Parts out of one hundred',questions:[
+ {q:'Which symbol means “percent”?',answers:['%','/','+','×'],right:0,why:'The percent symbol is %. It means out of one hundred.'},
+ {q:'What does 25% mean?',answers:['25 out of 10','25 out of 100','25 out of 1','25 out of 1000'],right:1,why:'25% means 25 parts out of 100 equal parts.'},
+ {q:'How do we write 50 out of 100 as a percentage?',answers:['5%','10%','50%','100%'],right:2,why:'50 of 100 equal parts is 50%.'},
+ {q:'A grid has 100 squares and 8 are shaded. What percentage is shaded?',answers:['80%','18%','0.8%','8%'],right:3,why:'Eight out of a hundred equal squares is 8%.'},
+ {q:'Which percentage is one whole?',answers:['100%','50%','25%','10%'],right:0,why:'A whole is all 100 out of 100 parts, so it is 100%.'},
+ {q:'Which is greater?',answers:['20%','70%','40%','10%'],right:1,why:'70 out of 100 is greater than 20, 40 or 10 out of 100.'},
+ {q:'How many squares are shaded if 35% of a 100-square grid is shaded?',answers:['3','5','30','35'],right:3,why:'35% means 35 of the 100 equal squares.'},
+ {q:'Which percentage represents no shaded squares out of 100?',answers:['1%','10%','0%','100%'],right:2,why:'Zero shaded parts out of 100 equals 0%.'},
+ {q:'What percentage is 90 out of 100?',answers:['9%','90%','19%','100%'],right:1,why:'90 of 100 parts equals 90%.'},
+ {q:'A hundred-square grid has 60 shaded squares. How many are not shaded?',answers:['40','50','60','30'],right:0,why:'100 − 60 = 40 unshaded squares.'}
+ ],notes:`<h3>1. What is a percentage?</h3><p><strong>Percent</strong> means “out of one hundred”. The symbol is <strong>%</strong>. So <strong>25%</strong> means 25 out of 100 equal parts.</p>
+ <div class="revhundred" role="img" aria-label="Hundred square grid with fifty shaded squares to show 50 percent">${Array.from({length:100},(_,i)=>`<i class="${i<50?'filled':''}"></i>`).join('')}</div><p>50 of the 100 squares are shaded: <strong>50%</strong>.</p>
+ <h3>2. Read the percentage</h3><p>1% means one part of one hundred. 100% means the whole.</p><h3>3. Worked example</h3><p>If 80 of 100 stickers are blue, <strong>80%</strong> are blue.</p>`}
+};
+let revSaveStatus='',revSubject=null,revTopic=null,revAnswerIndex=0,revScore=0,revAnswered=false,revChoice=null;
 function resetRevisionSelection(){revSubject=null;revTopic=null;revAnswerIndex=0;revScore=0;revAnswered=false;revChoice=null;}
 const revYear=()=>Number((state.detail||'').replace('y',''));
+function readRevisionProgress(topic){
+ try{
+ const obj=JSON.parse(localStorage.getItem(REV_3B_KEY)||'null');
+ const results=Array.isArray(obj&&obj.attempts)?obj.attempts.filter(a=>a&&a.year===3&&a.subject==='math'&&a.topic===topic&&Number.isInteger(a.score)&&a.score>=0&&a.score<=10&&a.total===10&&typeof a.savedAt==='string'):[];
+ if(topic==='fractions'){
+  const old=JSON.parse(localStorage.getItem(REV_PROGRESS_KEY)||'null');
+  const legacy=Array.isArray(old&&old.attempts)?old.attempts.filter(a=>a&&a.year===3&&a.subject==='math'&&a.topic==='fractions'&&Number.isInteger(a.score)&&a.score>=0&&a.score<=10&&a.total===10&&typeof a.savedAt==='string'):[];
+  return legacy.concat(results).sort((a,b)=>a.savedAt.localeCompare(b.savedAt)).slice(-100);
+ }
+ return results.slice(-100);
+ }catch(e){return []}
+}
+function saveRevisionProgress(score,topic){
+ try{
+ const value=JSON.parse(localStorage.getItem(REV_3B_KEY)||'null');
+ const attempts=Array.isArray(value&&value.attempts)?value.attempts:[];
+ const attempt={year:3,subject:'math',topic,score,total:10,savedAt:new Date().toISOString(),id:Date.now()+'-'+Math.floor(Math.random()*100000)};
+ attempts.push(attempt);
+ localStorage.setItem(REV_3B_KEY,JSON.stringify({version:3,attempts:attempts.slice(-500)}));
+ const verify=JSON.parse(localStorage.getItem(REV_3B_KEY)||'null');
+ if(!verify||!verify.attempts.some(a=>a.id===attempt.id))throw new Error('Save verification failed');
+ revSaveStatus='Saved successfully on this device.';
+ return true;
+ }catch(e){revSaveStatus='Unable to save. Please check browser storage settings.';console.warn('V15 progress save error',e);return false}
+}
+function progressSummary(topic){
+ const attempts=readRevisionProgress(topic);
+ if(!attempts.length)return '<p class="revnote">No saved results for this topic. Finish all 10 questions to save your result.</p>';
+ const latest=attempts[attempts.length-1],best=Math.max(...attempts.map(a=>a.score));
+ const when=new Date(latest.savedAt),date=Number.isNaN(when.getTime())?'recently':when.toLocaleString('en-MY',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+ return `<div class="revprogress" role="status"><strong>Saved Progress ✓</strong><p>Last Score: <strong>${latest.score}/10</strong> · Best Score: <strong>${best}/10</strong> · Completed: <strong>${attempts.length}</strong></p><p class="muted mini">Last saved: ${date}. Stored on this device only.</p></div>`;
+}
 function revisionScreen(m){
- const year=revYear(); if(![3,4,5].includes(year))return hub(m);
- const crumb=`<p class="revcrumb">Revision Zone <span>›</span> Year ${year}${revSubject?' <span>›</span> '+(SUBJECTS.find(s=>s.id===revSubject)?.name||''):''}${revTopic?' <span>›</span> Fractions':''}</p>`;
- let content='';
- if(!revSubject){content=`<h2>Choose a subject</h2><p class="muted">Year ${year} • Eight KSSR subjects • Select freely</p><div class="revgrid">${SUBJECTS.map(sub=>`<button class="revcard" data-rev-subject="${sub.id}" style="--revcolor:${sub.color}">${iconSVG(sub.icon)}<strong>${safe(sub.name)}</strong><small>Browse topics →</small></button>`).join('')}</div>`}
- else if(!revTopic){
+ const year=revYear();if(![3,4,5].includes(year))return hub(m);
  const sub=SUBJECTS.find(s=>s.id===revSubject);
- const isDemo=revSubject==='math'&&year===3;
- content=`<button class="revlink" data-rev-subject-back>← All subjects</button><h2>${safe(sub.name)}</h2><p class="muted">Year ${year} topics</p><div class="revgrid"><button class="revcard" data-rev-topic="${isDemo?'fractions':'planned'}" style="--revcolor:#def0ff"><span class="rev-symbol">${isDemo?'¼':'📚'}</span><strong>${isDemo?'Fractions (sample lesson)':'Learning topics'}</strong><small>${isDemo?'Illustrated notes + 10 practice questions':'Content preparation & curriculum review pending'}</small></button></div>${isDemo?'<p class="revnote">This lesson demonstrates the learning flow only. Curriculum mapping and full content QA are still required.</p>':'<p class="revnote">Full notes and exercises for this subject are not published yet. We will add them only after checking Year 3–5 KSSR/DSKP topics.</p>'}${isDemo?progressSummary():''}`}
- else if(revTopic==='planned'){content=`<button class="revlink" data-rev-topic-back>← Back to topics</button><div class="revempty"><h2>Content in development</h2><p>Notes, pictures and exercises need curriculum mapping and quality assurance before release.</p></div>`}
- else if(revTopic==='fractions'&&revAnswerIndex<0){content=`<button class="revlink" data-rev-topic-back>← Back to topics</button><h2>Fractions — Year 3</h2><p class="muted">Sample revision notes • Not yet curriculum-certified</p><div class="revlesson"><h3>What is a fraction?</h3><p>A fraction describes equal parts of a whole. For example, 1/4 means one out of four equal parts.</p><div class="revpicture" role="img" aria-label="Four equal boxes with one shaded"><span class="shaded"></span><span></span><span></span><span></span></div><p><strong>Numerator:</strong> number of parts selected. <strong>Denominator:</strong> total number of equal parts.</p><h3>Worked example</h3><p>2/4 + 1/4 = 3/4 because the parts have the same denominator. Add the numerators: 2 + 1 = 3.</p>${progressSummary()}<button class="action primary" data-rev-start>Start 10 practice questions →</button></div>`}
- else if(revTopic==='fractions'&&revAnswerIndex>=DEMO_QUESTIONS.length){content=`<div class="revresults"><h2>Practice complete!</h2><p class="revscore">${revScore} / ${DEMO_QUESTIONS.length}</p><p role="status">${safe(revSaveStatus||"Save status not available")}</p>${progressSummary()}<button class="action primary" data-rev-restart>Practice again</button> <button class="action" data-rev-notes>Read notes</button></div>`}
- else {const item=DEMO_QUESTIONS[revAnswerIndex];content=`<button class="revlink" data-rev-notes>← Back to notes</button><p class="revcrumb">Question ${revAnswerIndex+1} of 10 · Score ${revScore}</p><div class="revlesson"><h2>${safe(item.q)}</h2><div class="revanswers">${item.answers.map((ans,i)=>`<button data-rev-answer="${i}" ${revAnswered?'disabled':''} class="revchoice ${revAnswered&&i===item.right?'correct':revAnswered&&revChoice===i?'wrong':''}">${safe(ans)}</button>`).join('')}</div>${revAnswered?`<div class="revfeedback"><strong>${revChoice===item.right?'Great job!':'Keep learning!'}</strong><p>${safe(item.why)}</p><button class="action primary" data-rev-next>${revAnswerIndex===9?'View results':'Next question →'}</button></div>`:''}</div>`}
+ const lesson=revTopic&&REV_LESSONS[revTopic];
+ const crumb=`<p class="revcrumb">Revision Zone <span>›</span> Year ${year}${sub?' <span>›</span> '+safe(sub.name):''}${lesson?' <span>›</span> '+safe(lesson.title):''}</p>`;
+ let content='';
+ if(!revSubject)content=`<h2>Choose a subject</h2><p class="muted">Year ${year} • Eight subjects</p><div class="revgrid">${SUBJECTS.map(s=>`<button class="revcard" data-rev-subject="${s.id}" style="--revcolor:${s.color}">${iconSVG(s.icon)}<strong>${safe(s.name)}</strong><small>Browse topics →</small></button>`).join('')}</div>`;
+ else if(!revTopic){
+ const active=revSubject==='math'&&year===3;
+ content=`<button class="revlink" data-rev-subject-back>← All subjects</button><h2>${safe(sub.name)}</h2><p class="muted">Year ${year} · ${active?'3 practice lessons available':'Contents pending review'}</p>`;
+ if(active)content+=`<div class="revgrid">${Object.entries(REV_LESSONS).map(([id,t])=>`<button class="revcard" style="--revcolor:${id==='fractions'?'#e3f6e9':id==='decimals'?'#e4efff':'#fff0da'}" data-rev-topic="${id}"><span class="rev-symbol">${id==='fractions'?'¼':id==='decimals'?'0.25':'%'}</span><strong>${safe(t.title)}</strong><small>DSKP ${t.standard} · Illustrated notes + 10 questions</small></button>`).join('')}</div><p class="revnote">Practice content is for testing and further academic review, not a KPM-certified question bank. Scores stay on this device.</p>`;
+ else content+=`<div class="revempty"><h3>Topic content under development</h3><p>Year-specific notes and exercises are not published for this subject yet. They will be added after topic mapping and checking.</p></div>`;
+ }else if(!lesson){content=`<button class="revlink" data-rev-topic-back>← Back to topics</button><div class="revempty">This lesson is not yet available.</div>`}
+ else if(revAnswerIndex<0){content=`<button class="revlink" data-rev-topic-back>← Back to topics</button><h2>${safe(lesson.title)} — Year 3</h2><p class="muted">Mathematics • DSKP topic ${lesson.standard} • Draft learning notes</p><div class="revlesson">${lesson.notes}${progressSummary(revTopic)}<button class="action primary" data-rev-start>Start 10 practice questions →</button></div>`}
+ else if(revAnswerIndex>=lesson.questions.length){content=`<div class="revresults"><h2>Practice complete!</h2><p class="revscore">${revScore} / ${lesson.questions.length}</p><p role="status">${safe(revSaveStatus)}</p>${progressSummary(revTopic)}<button class="action primary" data-rev-restart>Practice again</button> <button class="action" data-rev-notes>Read notes</button></div>`}
+ else {const item=lesson.questions[revAnswerIndex];content=`<button class="revlink" data-rev-notes>← Back to notes</button><p class="revcrumb">Question ${revAnswerIndex+1} of 10 · Score ${revScore}</p><div class="revlesson"><h2>${safe(item.q)}</h2><div class="revanswers">${item.answers.map((ans,i)=>`<button data-rev-answer="${i}" ${revAnswered?'disabled':''} class="revchoice ${revAnswered&&i===item.right?'correct':revAnswered&&revChoice===i?'wrong':''}">${safe(ans)}</button>`).join('')}</div>${revAnswered?`<div class="revfeedback"><strong>${revChoice===item.right?'Great job!':'Keep learning!'}</strong><p>${safe(item.why)}</p><button class="action primary" data-rev-next>${revAnswerIndex===9?'View results':'Next question →'}</button></div>`:''}</div>`}
  return `<section class="panel app-screen module-shell">${head(m)}${crumb}<div class="rev-area">${content}</div></section>`;
 }
 function handleRevisionClick(e){if(state.view!=='revision'||!state.detail)return;const b=e.target.closest('button');if(!b)return;
@@ -76,8 +121,8 @@ function handleRevisionClick(e){if(state.view!=='revision'||!state.detail)return
  else if(b.hasAttribute('data-rev-topic')){revTopic=b.dataset.revTopic;revAnswerIndex=-1;}
  else if(b.hasAttribute('data-rev-topic-back')){revTopic=null;revAnswerIndex=0;}
  else if(b.hasAttribute('data-rev-start')){revAnswerIndex=0;revScore=0;revAnswered=false;revChoice=null;}
- else if(b.hasAttribute('data-rev-answer')){if(revAnswered)return;revChoice=Number(b.dataset.revAnswer);revAnswered=true;if(revChoice===DEMO_QUESTIONS[revAnswerIndex].right)revScore++;}
- else if(b.hasAttribute('data-rev-next')){revAnswerIndex++;revAnswered=false;revChoice=null;if(revAnswerIndex===DEMO_QUESTIONS.length){saveRevisionProgress(revScore)}}
+ else if(b.hasAttribute('data-rev-answer')){if(revAnswered||!REV_LESSONS[revTopic])return;revChoice=Number(b.dataset.revAnswer);revAnswered=true;if(revChoice===REV_LESSONS[revTopic].questions[revAnswerIndex].right)revScore++;}
+ else if(b.hasAttribute('data-rev-next')){if(!revAnswered)return;revAnswerIndex++;revAnswered=false;revChoice=null;if(revAnswerIndex===REV_LESSONS[revTopic].questions.length)saveRevisionProgress(revScore,revTopic);}
  else if(b.hasAttribute('data-rev-notes')){revAnswerIndex=-1;revAnswered=false;}
  else if(b.hasAttribute('data-rev-restart')){revAnswerIndex=-1;revScore=0;revAnswered=false;}
  else return;

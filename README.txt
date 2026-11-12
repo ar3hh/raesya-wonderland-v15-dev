@@ -1,12 +1,3 @@
-WonderLand V15 — Revision Save Progress Fix (Phase 3A.1)
-
-Replaces previous V15 development files only; does not modify V14.
-- Records each completed demo practice (up to 100 recent attempts) in V15 localStorage.
-- Shows Last Score, Best Score, number of completed sessions and saved time.
-- Shows the saved progress after refresh, and provides a clear warning if writing fails.
-- Existing Phase 3A demo score key is not deleted or overwritten.
-- Browser/device storage is local, not synced; data may be erased by clearing site data.
-- This is a demo lesson only; full curriculum content and QA remain pending.
-
-Upload the files and assets folder at repository root, commit, refresh,
-finish all ten questions, then refresh and revisit Year 3 > Mathematics > Fractions.
+WonderLand V15 Phase 3B (2026-11-12)
+Upload all files and assets/ to root of V15 DEVELOPMENT repository; overwrite matching names. Do not deploy over V14.
+Adds two actual Year 3 Mathematics illustrated draft lessons: Decimals (3.2) and Percentages (3.3), each with 10 original MCQs and immediate answer explanations. Retains Fractions (3.1) and Phase 3A.1 progress; introduces separate per-topic save for new attempts. Other subjects and Years 4-5 remain scaffold only. Content is draft, not comprehensively QA or KPM certified.
